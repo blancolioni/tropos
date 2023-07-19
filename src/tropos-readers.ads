@@ -5,6 +5,7 @@ package Tropos.Readers is
    function End_Of_Stream (This : Text_Stream) return Boolean is abstract;
    function Get_Line (This : in out Text_Stream) return String is abstract;
    procedure Reset (This : in out Text_Stream) is abstract;
+   procedure Close (This : in out Text_Stream) is abstract;
 
    function File_Stream
      (Path : String)

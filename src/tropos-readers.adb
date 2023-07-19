@@ -14,6 +14,7 @@ package body Tropos.Readers is
    overriding function End_Of_Stream (This : Text_File_Stream) return Boolean;
    overriding function Get_Line (This : in out Text_File_Stream) return String;
    overriding procedure Reset (This : in out Text_File_Stream);
+   overriding procedure Close (This : in out Text_File_Stream);
 
    type Text_String_Stream is
      new Text_Stream with
@@ -32,6 +33,19 @@ package body Tropos.Readers is
 
    overriding procedure Reset
      (This : in out Text_String_Stream);
+
+   overriding procedure Close
+     (This : in out Text_String_Stream)
+   is null;
+
+   -----------
+   -- Close --
+   -----------
+
+   overriding procedure Close (This : in out Text_File_Stream) is
+   begin
+      Ada.Text_IO.Close (This.File);
+   end Close;
 
    ------------
    -- Create --
@@ -125,7 +139,9 @@ package body Tropos.Readers is
    is
       R : constant Reader'Class := Create (Source);
    begin
-      return R.Read (Source);
+      return Config : constant Configuration := R.Read (Source) do
+         Source.Close;
+      end return;
    end Read;
 
    -----------
