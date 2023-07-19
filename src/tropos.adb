@@ -2,6 +2,9 @@ with Ada.Strings.UTF_Encoding.Wide_Wide_Strings;
 
 package body Tropos is
 
+   Local_Empty_Config : aliased constant Configuration :=
+                          [others => <>];
+
    ---------
    -- "+" --
    ---------
@@ -50,8 +53,12 @@ package body Tropos is
                                 Key  : String)
                                 return Constant_Reference_Type
    is
-      pragma Assert (This.Child_Map.Contains (Key));
-      Child : constant Configuration_Access := This.Child_Map (Key);
+      Position : constant Configuration_Maps.Cursor :=
+                   This.Child_Map.Find (Key);
+      Child    : constant Configuration_Access :=
+                   (if Configuration_Maps.Has_Element (Position)
+                    then This.Child_Map (Position)
+                    else Local_Empty_Config'Access);
    begin
       return Constant_Reference_Type'(Element => Child);
    end Constant_Reference;
@@ -182,10 +189,14 @@ package body Tropos is
      (This : Configuration)
       return Integer
    is
+      Image : constant String :=
+                Ada.Strings.Unbounded.To_String (This.Name);
    begin
-      return Integer'Value
-        (Ada.Strings.Unbounded.To_String
-           (This.Name));
+      if Image = "" then
+         return 0;
+      else
+         return Integer'Value (Image);
+      end if;
    end To_Integer;
 
    -------------
