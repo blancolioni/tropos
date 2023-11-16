@@ -2,6 +2,7 @@ package Tropos.Readers is
 
    type Text_Stream is abstract tagged limited private;
 
+   function Name (This : Text_Stream) return String is abstract;
    function End_Of_Stream (This : Text_Stream) return Boolean is abstract;
    function Get_Line (This : in out Text_Stream) return String is abstract;
    procedure Reset (This : in out Text_Stream) is abstract;

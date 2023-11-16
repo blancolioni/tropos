@@ -1,6 +1,7 @@
 with Ada.Strings.Unbounded;
 with Ada.Text_IO;
 
+with Tropos.Readers.CSV;
 with Tropos.Readers.Json;
 
 package body Tropos.Readers is
@@ -8,13 +9,17 @@ package body Tropos.Readers is
    type Text_File_Stream is
      new Text_Stream with
       record
-         File : Ada.Text_IO.File_Type;
+         File_Name : Ada.Strings.Unbounded.Unbounded_String;
+         File      : Ada.Text_IO.File_Type;
       end record;
 
    overriding function End_Of_Stream (This : Text_File_Stream) return Boolean;
    overriding function Get_Line (This : in out Text_File_Stream) return String;
    overriding procedure Reset (This : in out Text_File_Stream);
    overriding procedure Close (This : in out Text_File_Stream);
+
+   overriding function Name (This : Text_File_Stream) return String
+   is (Ada.Strings.Unbounded.To_String (This.FIle_Name));
 
    type Text_String_Stream is
      new Text_Stream with
@@ -38,6 +43,9 @@ package body Tropos.Readers is
      (This : in out Text_String_Stream)
    is null;
 
+   overriding function Name (This : Text_String_Stream) return String
+   is ("[string]");
+
    -----------
    -- Close --
    -----------
@@ -59,6 +67,10 @@ package body Tropos.Readers is
       if Tropos.Readers.Json.Try (Source) then
          Source.Reset;
          return Tropos.Readers.Json.Read;
+      end if;
+      if Tropos.Readers.CSV.Try (Source) then
+         Source.Reset;
+         return Tropos.Readers.CSV.Read;
       end if;
       raise Constraint_Error with
         "no readers found";
@@ -98,6 +110,8 @@ package body Tropos.Readers is
    is
    begin
       return This : Text_File_Stream do
+         This.File_Name :=
+           Ada.Strings.Unbounded.To_Unbounded_String (Path);
          Ada.Text_IO.Open (This.File, Ada.Text_IO.In_File, Path);
       end return;
    end File_Stream;

@@ -1,5 +1,7 @@
 with Ada.Strings.UTF_Encoding.Wide_Wide_Strings;
 
+with Tropos.Readers;
+
 package body Tropos is
 
    Local_Empty_Config : aliased constant Configuration :=
@@ -171,6 +173,21 @@ package body Tropos is
         Iterator'
           (Container => Container'Unchecked_Access);
    end Iterate;
+
+   ----------
+   -- Load --
+   ----------
+
+   function Load (Path : String) return Configuration is
+      Stream : Readers.Text_Stream'Class :=
+                 Readers.File_Stream (Path);
+   begin
+      return Config : constant Configuration :=
+        Readers.Read (Stream)
+      do
+         null;
+      end return;
+   end Load;
 
    ----------------
    -- To_Integer --

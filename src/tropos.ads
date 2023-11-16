@@ -17,6 +17,8 @@ package Tropos is
      String_Literal => To_String,
      Aggregate => (Empty => Empty, Add_Unnamed => Append);
 
+   function Is_Empty (This : Configuration) return Boolean;
+
    type Cursor is private;
 
    No_Element : constant Cursor;
@@ -65,6 +67,31 @@ package Tropos is
       Child_Tag : String)
       return Configuration;
 
+   function Child
+     (This      : Configuration;
+      Index     : Positive)
+      return Configuration;
+
+   function Length
+     (This : Configuration)
+      return Natural;
+
+   function First_Child
+     (This : Configuration)
+      return Configuration;
+
+   function Get
+     (This    : Configuration;
+      Tag     : String;
+      Default : String := "")
+      return String;
+
+   function Get
+     (This    : Configuration;
+      Index   : Positive;
+      Default : String := "")
+      return String;
+
    function Empty return Configuration;
    procedure Append (This : in out Configuration;
                      Item : Configuration);
@@ -74,6 +101,8 @@ package Tropos is
                      Value : Configuration);
 
    function "+" (S : String) return Configuration;
+
+   function Load (Path : String) return Configuration;
 
 private
 
@@ -136,5 +165,46 @@ private
    overriding function Next
      (Object   : Iterator;
       Position : Cursor) return Cursor;
+
+   function Get
+     (This    : Configuration;
+      Tag     : String;
+      Default : String := "")
+      return String
+   is (if This.Contains (Tag)
+       then This.Child (Tag).To_String
+       else Default);
+
+   function Get
+     (This    : Configuration;
+      Index   : Positive;
+      Default : String := "")
+      return String
+   is (if Index <= This.Child_Vector.Last_Index
+       then This.Child_Vector.Element (Index).To_String
+       else Default);
+
+   function Is_Empty (This : Configuration) return Boolean
+   is (This.Child_Vector.Is_Empty);
+
+   function First_Child
+     (This : Configuration)
+      return Configuration
+   is (if This.Is_Empty
+       then Empty
+       else This.Child_Vector.First_Element.all);
+
+   function Child
+     (This      : Configuration;
+      Index     : Positive)
+      return Configuration
+   is (if Index <= This.Child_Vector.Last_Index
+       then This.Child_Vector.Element (Index).all
+       else Empty);
+
+   function Length
+     (This      : Configuration)
+      return Natural
+   is (This.Child_Vector.Last_Index);
 
 end Tropos;

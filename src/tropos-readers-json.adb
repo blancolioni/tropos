@@ -1,5 +1,6 @@
 with Ada.Characters.Handling;
 with Ada.Strings.Unbounded;
+with Ada.Text_IO;
 
 package body Tropos.Readers.Json is
 
@@ -54,6 +55,16 @@ package body Tropos.Readers.Json is
 
       procedure Error (Message : String) is
       begin
+         Ada.Text_IO.Put_Line
+           (Ada.Text_IO.Standard_Error,
+            Ada.Strings.Unbounded.To_String (Current_Line));
+
+         Ada.Text_IO.Put_Line
+           (Ada.Text_IO.Standard_Error,
+            Stream.Name
+            & ":" & Current_Line_Index'Image
+            & ": " & Message);
+
          raise Constraint_Error with Message;
       end Error;
 
@@ -177,6 +188,7 @@ package body Tropos.Readers.Json is
                   declare
                      Id : constant String := Parse_Terminal;
                   begin
+                     Skip_Whitespace;
                      if Current_Character = ':' then
                         Next_Character;
                      else
