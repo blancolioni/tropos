@@ -19,7 +19,7 @@ package body Tropos.Readers is
    overriding procedure Close (This : in out Text_File_Stream);
 
    overriding function Name (This : Text_File_Stream) return String
-   is (Ada.Strings.Unbounded.To_String (This.FIle_Name));
+   is (Ada.Strings.Unbounded.To_String (This.File_Name));
 
    type Text_String_Stream is
      new Text_Stream with

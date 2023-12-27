@@ -25,6 +25,9 @@ package Tropos is
 
    function Has_Element (Position : Cursor) return Boolean;
 
+   function Element (Position : Cursor) return Configuration;
+   function Key (Position : Cursor) return String;
+
    package Configuration_Iterator_Interfaces is new
      Ada.Iterator_Interfaces (Cursor, Has_Element);
 
@@ -153,6 +156,22 @@ private
    function Has_Element (Position : Cursor) return Boolean
    is (Configuration_Vectors.Has_Element (Position.Vector_Position)
        or else Configuration_Maps.Has_Element (Position.Map_Position));
+
+   function Element (Position : Cursor) return Configuration
+   is (if Configuration_Vectors.Has_Element (Position.Vector_Position)
+       then Configuration_Vectors.Element (Position.Vector_Position).all
+       elsif Configuration_Maps.Has_Element (Position.Map_Position)
+       then Configuration_Maps.Element (Position.Map_Position).all
+       else (raise Constraint_Error
+           with "Tropos: Element called on empty cursor"));
+
+   function Key (Position : Cursor) return String
+   is (if Configuration_Maps.Has_Element (Position.Map_Position)
+       then Configuration_Maps.Key (Position.Map_Position)
+       elsif Configuration_Vectors.Has_Element (Position.Vector_Position)
+       then Configuration_Vectors.To_Index (Position.Vector_Position)'Image
+       else (raise Constraint_Error
+           with "Tropos: Key called on empty cursor"));
 
    type Iterator is
      new Configuration_Iterator_Interfaces.Forward_Iterator with
