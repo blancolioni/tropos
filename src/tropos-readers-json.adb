@@ -225,6 +225,10 @@ package body Tropos.Readers.Json is
 
       end Parse_Json_Object;
 
+      --------------------------
+      -- Parse_Rest_Of_String --
+      --------------------------
+
       function Parse_Rest_Of_String return String is
          use Ada.Strings.Unbounded;
          Result : Unbounded_String;

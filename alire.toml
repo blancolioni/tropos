@@ -7,7 +7,7 @@ authors = ["Fraser Wilson"]
 maintainers = ["Fraser Wilson <fraser@thewhitelion.eu>"]
 maintainers-logins = ["blancolioni"]
 
-tags = ["utility", "config", "json", "xml", "yaml", "toml", "ada-2022", "ada2022"]
+tags = ["utility", "config", "json", "csv", "ada-2022", "ada2022"]
 website = "https://github.com/blancolioni/tropos"
 
 [build-switches]
